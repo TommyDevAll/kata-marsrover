@@ -30,6 +30,12 @@ const commandHandlers: Map<string, (state: State) => State> = new Map([
   ['B', back],
 ]);
 
+const printPosition = (state: State) => {
+  const directionString = directionObjToString.get(state.direction) || 'N';
+  const positionString = `${state.coordinates.x}:${state.coordinates.y}`;
+  return `${positionString}:${directionString}`;
+};
+
 export class Rover {
   private state: State;
   constructor(x: number, y: number, direction: string) {
@@ -45,8 +51,6 @@ export class Rover {
       this.state = (commandHandlers.get(command) || nothing)(this.state);
     });
 
-    const directionString = directionObjToString.get(this.state.direction) || 'N';
-    const positionString = `${this.state.coordinates.x}:${this.state.coordinates.y}`;
-    return `${positionString}:${directionString}`;
+    return printPosition(this.state);
   }
 }
