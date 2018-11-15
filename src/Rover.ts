@@ -1,7 +1,20 @@
 import { Coordinates, Direction, EAST, NORTH, SOUTH, WEST } from './Direction';
 
-const directionStringToObj: Map<string, Direction> = new Map([['N', NORTH], ['E', EAST], ['W', WEST], ['S', SOUTH]]);
-const directionObjToString: Map<Direction, string> = new Map([[NORTH, 'N'], [EAST, 'E'], [WEST, 'W'], [SOUTH, 'S']]);
+// noinspection TsLint
+const stringToDirection = new Map([
+  ['N', NORTH],
+  ['E', EAST],
+  ['W', WEST],
+  ['S', SOUTH]
+]);
+
+// noinspection TsLint
+const directionToString = new Map([
+  [NORTH, 'N'],
+  [EAST, 'E'],
+  [WEST, 'W'],
+  [SOUTH, 'S']
+]);
 
 class State {
   constructor(readonly coordinates: Coordinates, readonly direction: Direction) {}
@@ -31,7 +44,7 @@ const commandHandlers: Map<string, (state: State) => State> = new Map([
 ]);
 
 const printPosition = (state: State) => {
-  const directionString = directionObjToString.get(state.direction) || 'N';
+  const directionString = directionToString.get(state.direction) || 'N';
   const positionString = `${state.coordinates.x}:${state.coordinates.y}`;
   return `${positionString}:${directionString}`;
 };
@@ -41,7 +54,7 @@ export class Rover {
   constructor(x: number, y: number, direction: string) {
     this.state = {
       coordinates: { x, y },
-      direction: directionStringToObj.get(direction) || NORTH,
+      direction: stringToDirection.get(direction) || NORTH,
     };
   }
 
