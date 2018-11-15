@@ -21,19 +21,8 @@ export class Rover {
         this.directionObject = this.directionObject.left();
         this.direction = directionObjToString.get(this.directionObject) || 'N';
       } else {
-        if (this.direction === 'N') {
-          this.direction = 'E';
-          this.directionObject = EAST;
-        } else if (this.direction === 'E') {
-          this.direction = 'S';
-          this.directionObject = SOUTH;
-        } else if (this.direction === 'S') {
-          this.direction = 'W';
-          this.directionObject = WEST;
-        } else {
-          this.direction = 'N';
-          this.directionObject = NORTH;
-        }
+        this.directionObject = this.directionObject.right();
+        this.direction = directionObjToString.get(this.directionObject) || 'N';
       }
     });
     return `0:0:${this.direction}`;
