@@ -1,47 +1,42 @@
 import { Rover } from '../index';
 
-describe('Rover', () => {
-  let rover: Rover;
+interface TestRun {
+  commands: string;
+  expect: string;
+}
 
+let rover: Rover;
+
+const run = (test: TestRun) => it(test.commands, () => expect(rover.move(test.commands)).toBe(test.expect));
+
+const describeTests = (description: string, testRuns: TestRun[]) =>
+  describe(description, () => testRuns.forEach(test => run(test)));
+
+describe('Rover', () => {
   describe('when facing NORTH', () => {
     beforeEach(() => {
       rover = new Rover(0, 0, 'N');
     });
 
-    describe('when LEFT command is passed', () => {
-      it('once', () => {
-        expect(rover.move('L')).toBe('0:0:W');
-      });
+    describeTests('when LEFT command is passed', [
+      { commands: 'L', expect: '0:0:W' },
+      { commands: 'LL', expect: '0:0:S' },
+      { commands: 'LLL', expect: '0:0:E' },
+      { commands: 'LLLL', expect: '0:0:N' },
+    ]);
 
-      it('twice', () => {
-        expect(rover.move('LL')).toBe('0:0:S');
-      });
+    describeTests('when RIGHT command is passed', [
+      { commands: 'R', expect: '0:0:E' },
+      { commands: 'RR', expect: '0:0:S' },
+      { commands: 'RRR', expect: '0:0:W' },
+      { commands: 'RRRR', expect: '0:0:N' },
+    ]);
 
-      it('tree times', () => {
-        expect(rover.move('LLL')).toBe('0:0:E');
-      });
-
-      it('four times', () => {
-        expect(rover.move('LLLL')).toBe('0:0:N');
-      });
-    });
-
-    describe('when RIGHT command is passed', () => {
-      it('once', () => {
-        expect(rover.move('R')).toBe('0:0:E');
-      });
-
-      it('twice', () => {
-        expect(rover.move('RR')).toBe('0:0:S');
-      });
-
-      it('tree times', () => {
-        expect(rover.move('RRR')).toBe('0:0:W');
-      });
-
-      it('four times', () => {
-        expect(rover.move('RRRR')).toBe('0:0:N');
-      });
-    });
+    describeTests('when mixed LEFT and RIGHT commands are passed', [
+      { commands: 'LR', expect: '0:0:N' },
+      { commands: 'LRLR', expect: '0:0:N' },
+      { commands: 'LRLRL', expect: '0:0:W' },
+      { commands: 'LRLRR', expect: '0:0:E' },
+    ]);
   });
 });
