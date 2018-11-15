@@ -1,4 +1,4 @@
-import { Rover } from '../index';
+import { Rover } from '../Rover';
 
 import { TestRun, describeWith } from './utils/describeWith';
 
@@ -33,5 +33,9 @@ describe('Rover', () => {
       when('LRLRL', '0:0:W'),
       when('LRLRR', '0:0:E'),
     ]);
+    //
+    // describeWith(runner, 'when FRONT command is passed', [
+    //   when('F', '0:1:N'),
+    // ]);
   });
 });
