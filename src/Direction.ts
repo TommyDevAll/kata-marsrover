@@ -1,6 +1,5 @@
-export interface Coordinates {
-  x: number;
-  y: number;
+export class Coordinates {
+  constructor(readonly x: number, readonly y: number) {}
 }
 
 export interface Direction {
