@@ -1,7 +1,9 @@
-import { Coordinates } from './Coordinates';
-import { Direction, EAST, NORTH, SOUTH, WEST } from './Direction';
-import { Planet } from './Planet';
-import { Commands, Condition, State, StateHandler } from './State';
+import { Coordinates } from './model/Coordinates';
+import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
+import { Planet } from './model/Planet';
+import { State, StateHandler } from './State';
+import { Command } from './model/Command';
+import { Condition } from './model/Condition';
 
 interface RobotStateProperties {
   readonly coordinates: Coordinates;
@@ -27,18 +29,18 @@ const directionToString: Map<Direction, string> = new Map<Direction, string>([
   [SOUTH, 'S'],
 ]);
 
-const commandToString: Map<Commands, string> = new Map<Commands, string>([
-  [Commands.LEFT, 'L'],
-  [Commands.RIGHT, 'R'],
-  [Commands.FORWARD, 'F'],
-  [Commands.BACKWARD, 'B'],
+const commandToString: Map<Command, string> = new Map<Command, string>([
+  [Command.LEFT, 'L'],
+  [Command.RIGHT, 'R'],
+  [Command.FORWARD, 'F'],
+  [Command.BACKWARD, 'B'],
 ]);
 
-const stringToCommand: Map<string, Commands> = new Map<string, Commands>([
-  ['L', Commands.LEFT],
-  ['R', Commands.RIGHT],
-  ['F', Commands.FORWARD],
-  ['B', Commands.BACKWARD],
+const stringToCommand: Map<string, Command> = new Map<string, Command>([
+  ['L', Command.LEFT],
+  ['R', Command.RIGHT],
+  ['F', Command.FORWARD],
+  ['B', Command.BACKWARD],
 ]);
 
 const back: RobotStateHandler = (state: RobotState) => {
@@ -72,11 +74,11 @@ const completeMovement: RobotStateHandler = (state: RobotState) => {
   return state;
 };
 
-const commandHandlers: Map<Commands, RobotStateHandler> = new Map<Commands, RobotStateHandler>([
-  [Commands.LEFT, left],
-  [Commands.RIGHT, right],
-  [Commands.FORWARD, front],
-  [Commands.BACKWARD, back],
+const commandHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([
+  [Command.LEFT, left],
+  [Command.RIGHT, right],
+  [Command.FORWARD, front],
+  [Command.BACKWARD, back],
 ]);
 
 const printPosition = (state: RobotState) => {
@@ -100,7 +102,7 @@ export class MarsRover {
 
   move(commands: string) {
     [...commands].forEach((command: string) => {
-      this.state = (commandHandlers.get(stringToCommand.get(command) || Commands.NONE) || nothing)(this.state);
+      this.state = (commandHandlers.get(stringToCommand.get(command) || Command.NONE) || nothing)(this.state);
       this.state = this.handleOverflow(this.state);
       this.state = this.checkIfObstacle(this.state);
       this.state = completeMovement(this.state);

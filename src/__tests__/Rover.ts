@@ -1,4 +1,4 @@
-import { Coordinates } from '../Coordinates';
+import { Coordinates } from '../model/Coordinates';
 import { MarsRover } from '../MarsRover';
 
 import { TestPlanet } from './Planet';

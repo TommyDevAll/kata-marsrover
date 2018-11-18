@@ -11,16 +11,3 @@ export class State<T> {
 
 export type StateHandler<T> = (state: T) => T;
 
-export enum Condition {
-  IDLE,
-  MOVING,
-  BLOCKED,
-}
-
-export enum Commands {
-  NONE,
-  LEFT,
-  RIGHT,
-  FORWARD,
-  BACKWARD,
-}
