@@ -124,12 +124,13 @@ describe('MarsRover', () => {
         describeWith(runner, 'should stop if he touches an obstacle', [
           when('FF', '0:0:N', [{ x: 0, y: 1 }]),
           when('FF', '0:1:N', [{ x: 0, y: 2 }]),
+          when('FFRRF', '0:1:N', [{ x: 0, y: 2 }]),
         ]);
 
         describeWith(runner, 'should not wrap if there are obstacles in the other side of the planet', [
           when('B', '0:0:N', [{ x: 0, y: 2 }]),
           when('LF', '0:0:W', [{ x: 2, y: 0 }]),
-          when('RFFF', '2:0:E', [{ x: 0, y: 0 }]),
+          when('RFLFRFF', '2:1:E', [{ x: 0, y: 1 }]),
           when('FFF', '0:2:N', [{ x: 0, y: 0 }]),
         ]);
       });

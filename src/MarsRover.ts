@@ -8,6 +8,7 @@ import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
 import { Planet } from './model/Planet';
 import { RobotState } from './state/RobotState';
 import { State } from './state/State';
+import { discardCommandIfBlocked } from './handler/Command';
 
 const stringToDirection: Map<string, Direction> = new Map<string, Direction>([
   ['N', NORTH],
@@ -51,6 +52,7 @@ export class MarsRover {
     });
 
     this.chainHandler = chainHandlerFactory([
+      discardCommandIfBlocked,
       handleMovement,
       handleOverflowFactory(planet),
       checkIfObstacleFactory(planet),
