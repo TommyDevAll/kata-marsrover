@@ -62,8 +62,8 @@ export class MarsRover {
 
   move(commands: string) {
     [...commands].forEach((command: string) => {
-      const nextCommand = { command: stringToCommand.get(command) || Command.NONE };
-      this.state = this.chainHandler(this.state.update(nextCommand));
+      const nextCommand = stringToCommand.get(command) || Command.NONE;
+      this.state = this.chainHandler(this.state.update({ command: nextCommand }));
     });
 
     return printPosition(this.state);
