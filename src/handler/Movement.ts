@@ -40,7 +40,7 @@ export const handleMovement: RobotStateHandler = (state: RobotState) =>
 
 export const completeMovement: RobotStateHandler = (state: RobotState) => {
   if (state.props.condition === Condition.MOVING) {
-    return state.update({ coordinates: state.props.target });
+    return state.update({ coordinates: state.props.target, condition: Condition.IDLE });
   }
   return state;
 };
