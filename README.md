@@ -11,6 +11,8 @@ Develop an api that moves a rover around on a grid.
 * Implement commands that move the rover forward / backward.
 * Implement commands that turn the rover left / right.
 * Make sure rover doesn't move if it receives an unknown command
+* Implement wrapping from one edge of the grid to another. (planets are spheres after all)
+* Implement obstacle detection before each move to a new square. 
 
 Sample api:
 ```
