@@ -1,6 +1,4 @@
-export class Coordinates {
-  constructor(readonly x: number, readonly y: number) {}
-}
+import { Coordinates } from './Coordinates';
 
 export interface Direction {
   left(): Direction;

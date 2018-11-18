@@ -1,14 +1,26 @@
+import { Coordinates } from '../Coordinates';
 import { Rover } from '../Rover';
 
-import { TestRun, describeWith } from './utils/describeWith';
 import { TestPlanet } from './Planet';
+import { TestRun, describeWith } from './utils/describeWith';
+
+interface TestInput {
+  commands: string;
+  obstacles: Coordinates[];
+}
 
 describe('Rover', () => {
   let rover: Rover;
   let planet: TestPlanet;
 
-  const runner = (testRun: TestRun<string, string>) => expect(rover.move(testRun.input)).toBe(testRun.expect);
-  const when = (input: string, expect: string) => new TestRun(input, input, expect);
+  const runner = (testRun: TestRun<TestInput, string>) => {
+    planet.setObstacles(testRun.input.obstacles);
+    expect(rover.move(testRun.input.commands)).toBe(testRun.expect);
+  };
+
+  const when = (commands: string, expect: string, obstacles: Coordinates[] = []) => {
+    return new TestRun(commands, { commands, obstacles }, expect);
+  };
 
   describe('when facing NORTH in a 10x10 planet', () => {
     beforeEach(() => {
@@ -99,6 +111,19 @@ describe('Rover', () => {
         when('RFFF', '0:0:E'),
         when('RFFFF', '1:0:E'),
         when('RFFFFF', '2:0:E'),
+      ]);
+    });
+
+    describe('when the 3x3 planet has obstacles', () => {
+      describeWith(runner, 'should move if no obstacles on his path', [
+        when('FF', '0:2:N', []),
+        when('FF', '0:2:N', [{ x: 1, y: 0 }]),
+        when('FFRFFRFF', '2:0:S', [{ x: 1, y: 0 }]),
+        when('FFRFFRFFRFFR', '0:0:N', [{ x: 1, y: 1 }]),
+      ]);
+
+      describeWith(runner, 'should stop if he touches an obstacle', [
+        when('FF', '0:1:N', [{ x: 0, y: 2 }]),
       ]);
     });
   });
