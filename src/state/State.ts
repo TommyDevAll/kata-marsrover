@@ -10,4 +10,3 @@ export class State<T> {
 }
 
 export type StateHandler<T> = (state: T) => T;
-
