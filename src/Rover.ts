@@ -1,6 +1,7 @@
 import { Coordinates } from './Coordinates';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './Direction';
 import { Planet } from './Planet';
+import { Commands, Condition, State } from './State';
 
 const stringToDirection: Map<string, Direction> = new Map<string, Direction>([
   ['N', NORTH],
@@ -16,21 +17,19 @@ const directionToString: Map<Direction, string> = new Map<Direction, string>([
   [SOUTH, 'S'],
 ]);
 
-enum Condition {
-  IDLE,
-  MOVING,
-  BLOCKED,
-}
+const commandToString: Map<Commands, string> = new Map<Commands, string>([
+  [Commands.LEFT, 'L'],
+  [Commands.RIGHT, 'R'],
+  [Commands.FORWARD, 'F'],
+  [Commands.BACKWARD, 'B'],
+]);
 
-class State {
-  // noinspection TsLint
-  constructor(
-    readonly coordinates: Coordinates,
-    readonly target: Coordinates,
-    readonly direction: Direction,
-    readonly condition: Condition,
-  ) {}
-}
+const stringToCommand: Map<string, Commands> = new Map<string, Commands>([
+  ['L', Commands.LEFT],
+  ['R', Commands.RIGHT],
+  ['F', Commands.FORWARD],
+  ['B', Commands.BACKWARD],
+]);
 
 const back: StateHandler = (state: State) => {
   return new State(state.coordinates, state.direction.back(state.coordinates), state.direction, Condition.MOVING);
@@ -59,11 +58,11 @@ const completeMovement: StateHandler = (state: State) => {
 
 type StateHandler = (state: State) => State;
 
-const commandHandlers: Map<string, StateHandler> = new Map<string, StateHandler>([
-  ['L', left],
-  ['R', right],
-  ['F', front],
-  ['B', back],
+const commandHandlers: Map<Commands, StateHandler> = new Map<Commands, StateHandler>([
+  [Commands.LEFT, left],
+  [Commands.RIGHT, right],
+  [Commands.FORWARD, front],
+  [Commands.BACKWARD, back],
 ]);
 
 const printPosition = (state: State) => {
@@ -81,8 +80,8 @@ export class Rover {
   }
 
   move(commands: string) {
-    [...commands].forEach(command => {
-      this.state = (commandHandlers.get(command) || nothing)(this.state);
+    [...commands].forEach((command: string) => {
+      this.state = (commandHandlers.get(stringToCommand.get(command) || Commands.NONE) || nothing)(this.state);
       this.state = this.handleOverflow(this.state);
       this.state = this.checkIfObstacle(this.state);
       this.state = completeMovement(this.state);
