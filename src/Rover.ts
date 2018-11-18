@@ -16,7 +16,7 @@ const directionToString: Map<Direction, string> = new Map<Direction, string>([
 ]);
 
 class State {
-  constructor(readonly coordinates: Coordinates, readonly movingTo: Coordinates, readonly direction: Direction) {}
+  constructor(readonly coordinates: Coordinates, readonly target: Coordinates, readonly direction: Direction) {}
 }
 
 const back: StateHandler = (state: State) => {
@@ -33,6 +33,10 @@ const right: StateHandler = (state: State) => {
 
 const left: StateHandler = (state: State) => {
   return new State(state.coordinates, state.coordinates, state.direction.left());
+};
+
+const completeMovement: StateHandler = (state: State) => {
+  return new State(state.target, state.target, state.direction);
 };
 
 type StateHandler = (state: State) => State;
@@ -61,21 +65,16 @@ export class Rover {
     [...commands].forEach(command => {
       const nothing = (state: State) => state;
       this.state = (commandHandlers.get(command) || nothing)(this.state);
-      this.state = this.checkPlanetOverflow(this.state);
+      this.state = this.handleOverflow(this.state);
+      this.state = completeMovement(this.state);
     });
 
     return printPosition(this.state);
   }
 
-  private checkPlanetOverflow(state: State) {
-    const to = state.movingTo;
-    const size = this.planet.size;
-    const wrap = (value: number) => (value >= 0 ? value % size : size + value);
-
-    const newX = wrap(to.x);
-    const newY = wrap(to.y);
-
-    const newPosition = new Coordinates(newX, newY);
-    return new State(newPosition, newPosition, state.direction);
+  private handleOverflow(state: State) {
+    const wrap = (value: number) => (value >= 0 ? value % this.planet.size : this.planet.size + value);
+    const newPosition = new Coordinates(wrap(state.target.x), wrap(state.target.y));
+    return new State(state.coordinates, newPosition, state.direction);
   }
 }

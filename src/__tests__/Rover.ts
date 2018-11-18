@@ -53,9 +53,9 @@ describe('Rover', () => {
       when('RF', '1:0:E'),
       when('RFF', '2:0:E'),
       when('RFFF', '3:0:E'),
-      when('RFFFBBB', '0:0:E'),
-      when('RFFFBB', '1:0:E'),
       when('RFFFB', '2:0:E'),
+      when('RFFFBB', '1:0:E'),
+      when('RFFFBBB', '0:0:E'),
     ]);
 
     describeWith(runner, 'when turning to WEST and then movements commands are passed', [
@@ -87,6 +87,18 @@ describe('Rover', () => {
         when('LLFFF', '0:0:S'),
         when('LLFFFF', '0:2:S'),
         when('LLFFFFF', '0:1:S'),
+      ]);
+
+      describeWith(runner, 'should wrap from left to right', [
+        when('LFFF', '0:0:W'),
+        when('LFFFF', '2:0:W'),
+        when('LFFFFF', '1:0:W'),
+      ]);
+
+      describeWith(runner, 'should wrap from right to left', [
+        when('RFFF', '0:0:E'),
+        when('RFFFF', '1:0:E'),
+        when('RFFFFF', '2:0:E'),
       ]);
     });
   });
