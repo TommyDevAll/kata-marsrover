@@ -38,7 +38,7 @@ const printPosition = (state: RobotState) => {
 
 export class MarsRover {
   private state: RobotState;
-  private chainHandler: RobotStateHandler;
+  private readonly chainHandler: RobotStateHandler;
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
