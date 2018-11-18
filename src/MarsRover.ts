@@ -1,4 +1,4 @@
-import { chainHandlerFactory } from './handler/ChainHandler';
+import { chainHandlers } from './handler/ChainHandlers';
 import { discardCommandIfBlocked } from './handler/Command';
 import { completeMovement, handleMovement } from './handler/Movement';
 import { checkIfObstacle, handleOverflow } from './handler/Planet';
@@ -51,7 +51,7 @@ export class MarsRover {
       command: Command.NONE,
     });
 
-    this.chainHandler = chainHandlerFactory([
+    this.chainHandler = chainHandlers([
       discardCommandIfBlocked,
       handleMovement,
       handleOverflow(planet),
