@@ -1,7 +1,7 @@
 import { chainHandlerFactory } from './handler/ChainHandler';
 import { discardCommandIfBlocked } from './handler/Command';
 import { completeMovement, handleMovement } from './handler/Movement';
-import { checkIfObstacleFactory, handleOverflowFactory } from './handler/Planet';
+import { checkIfObstacle, handleOverflow } from './handler/Planet';
 import { RobotStateHandler } from './handler/RobotStateHandler';
 import { Command } from './model/Command';
 import { Condition } from './model/Condition';
@@ -54,8 +54,8 @@ export class MarsRover {
     this.chainHandler = chainHandlerFactory([
       discardCommandIfBlocked,
       handleMovement,
-      handleOverflowFactory(planet),
-      checkIfObstacleFactory(planet),
+      handleOverflow(planet),
+      checkIfObstacle(planet),
       completeMovement,
     ]);
   }
