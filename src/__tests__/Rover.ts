@@ -1,5 +1,5 @@
 import { Coordinates } from '../Coordinates';
-import { Rover } from '../Rover';
+import { MarsRover } from '../MarsRover';
 
 import { TestPlanet } from './Planet';
 import { TestRun, describeWith } from './utils/describeWith';
@@ -9,8 +9,8 @@ interface TestInput {
   obstacles: Coordinates[];
 }
 
-describe('Rover', () => {
-  let rover: Rover;
+describe('MarsRover', () => {
+  let rover: MarsRover;
   let planet: TestPlanet;
 
   const runner = (testRun: TestRun<TestInput, string>) => {
@@ -25,7 +25,7 @@ describe('Rover', () => {
   describe('when facing NORTH in a 10x10 planet', () => {
     beforeEach(() => {
       planet = new TestPlanet(10);
-      rover = new Rover(0, 0, 'N', planet);
+      rover = new MarsRover(0, 0, 'N', planet);
     });
 
     describeWith(runner, 'when LEFT command is passed', [

@@ -1,22 +1,15 @@
-import { Coordinates } from './Coordinates';
-import { Direction } from './Direction';
+export class State<T> {
+  constructor(readonly props: T) {}
 
-interface StateProps {
-  readonly coordinates: Coordinates;
-  readonly target: Coordinates;
-  readonly direction: Direction;
-  readonly condition: Condition;
-}
-
-export class State {
-  constructor(readonly props: StateProps) {}
-
-  update(props: Partial<StateProps>): State {
-    return new State({ ...this.props, ...props });
+  update(props: Partial<T>): State<T> {
+    const first = this.props as any;
+    const second = props as any;
+    const merged = { ...first, ...second };
+    return new State(merged as T);
   }
 }
 
-export type StateHandler = (state: State) => State;
+export type StateHandler<T> = (state: T) => T;
 
 export enum Condition {
   IDLE,
