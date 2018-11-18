@@ -1,8 +1,8 @@
-import { Coordinates } from '../model/Coordinates';
 import { MarsRover } from '../MarsRover';
+import { Coordinates } from '../model/Coordinates';
 
-import { TestPlanet } from './Planet';
 import { TestRun, describeWith } from './utils/describeWith';
+import { TestPlanet } from './utils/TestPlanet';
 
 interface TestInput {
   commands: string;

@@ -1,5 +1,5 @@
-import { Coordinates } from '../model/Coordinates';
-import { Planet } from '../model/Planet';
+import { Coordinates } from '../../model/Coordinates';
+import { Planet } from '../../model/Planet';
 
 export class TestPlanet extends Planet {
   constructor(public size: number, public obstacles: Coordinates[] = []) {
