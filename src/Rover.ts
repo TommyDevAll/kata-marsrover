@@ -33,31 +33,31 @@ const stringToCommand: Map<string, Commands> = new Map<string, Commands>([
 
 const back: StateHandler = (state: State) => {
   return state.update({
-    target: state.direction.back(state.coordinates),
+    target: state.props.direction.back(state.props.coordinates),
     condition: Condition.MOVING,
   });
 };
 
 const front: StateHandler = (state: State) => {
   return state.update({
-    target: state.direction.front(state.coordinates),
+    target: state.props.direction.front(state.props.coordinates),
     condition: Condition.MOVING,
   });
 };
 
 const right: StateHandler = (state: State) => {
-  return state.update({ direction: state.direction.right() });
+  return state.update({ direction: state.props.direction.right() });
 };
 
 const left: StateHandler = (state: State) => {
-  return state.update({ direction: state.direction.left() });
+  return state.update({ direction: state.props.direction.left() });
 };
 
 const nothing = (state: State) => state;
 
 const completeMovement: StateHandler = (state: State) => {
-  if (state.condition === Condition.MOVING) {
-    return state.update({ coordinates: state.target });
+  if (state.props.condition === Condition.MOVING) {
+    return state.update({ coordinates: state.props.target });
   }
   return state;
 };
@@ -70,8 +70,8 @@ const commandHandlers: Map<Commands, StateHandler> = new Map<Commands, StateHand
 ]);
 
 const printPosition = (state: State) => {
-  const directionString = directionToString.get(state.direction) || 'N';
-  const positionString = `${state.coordinates.x}:${state.coordinates.y}`;
+  const directionString = directionToString.get(state.props.direction) || 'N';
+  const positionString = `${state.props.coordinates.x}:${state.props.coordinates.y}`;
   return `${positionString}:${directionString}`;
 };
 
@@ -101,14 +101,14 @@ export class Rover {
 
   private handleOverflow(state: State) {
     const wrap = (value: number) => (value >= 0 ? value % this.planet.size : this.planet.size + value);
-    const newPosition = new Coordinates(wrap(state.target.x), wrap(state.target.y));
+    const newPosition = new Coordinates(wrap(state.props.target.x), wrap(state.props.target.y));
     return state.update({ target: newPosition });
   }
 
   private checkIfObstacle(state: State) {
-    if (this.planet.isObstacle(state.target)) {
-      return state.update( {
-        target: state.coordinates,
+    if (this.planet.isObstacle(state.props.target)) {
+      return state.update({
+        target: state.props.coordinates,
         condition: Condition.BLOCKED,
       });
     }

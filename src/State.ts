@@ -14,22 +14,6 @@ export class State {
   update(props: Partial<StateProps>): State {
     return new State({ ...this.props, ...props });
   }
-
-  get coordinates(): Coordinates {
-    return this.props.coordinates;
-  }
-
-  get target(): Coordinates {
-    return this.props.target;
-  }
-
-  get direction(): Direction {
-    return this.props.direction;
-  }
-
-  get condition(): Condition {
-    return this.props.condition;
-  }
 }
 
 export type StateHandler = (state: State) => State;
