@@ -28,7 +28,7 @@ const left: RobotStateHandler = (state: RobotState) => {
 
 const nothing: RobotStateHandler = (state: RobotState) => state;
 
-const commandHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([
+const movementHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([
   [Command.LEFT, left],
   [Command.RIGHT, right],
   [Command.FORWARD, front],
@@ -36,7 +36,7 @@ const commandHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotS
 ]);
 
 export const handleMovement: RobotStateHandler = (state: RobotState) =>
-  (commandHandlers.get(state.props.command) || nothing)(state);
+  (movementHandlers.get(state.props.command) || nothing)(state);
 
 export const completeMovement: RobotStateHandler = (state: RobotState) => {
   if (state.props.condition === Condition.MOVING) {
