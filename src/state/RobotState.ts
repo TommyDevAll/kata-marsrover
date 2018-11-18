@@ -2,6 +2,7 @@ import { Command } from '../model/Command';
 import { Condition } from '../model/Condition';
 import { Coordinates } from '../model/Coordinates';
 import { Direction } from '../model/Direction';
+
 import { State } from './State';
 
 export interface RobotStateProperties {
