@@ -31,14 +31,13 @@ const stringToCommand: Map<string, Command> = new Map<string, Command>([
 ]);
 
 const printPosition = (state: RobotState) => {
-  const directionString = directionToString.get(state.props.direction) || 'N';
+  const directionString = directionToString.get(state.props.direction) || '-';
   const positionString = `${state.props.coordinates.x}:${state.props.coordinates.y}`;
   return `${positionString}:${directionString}`;
 };
 
 export class MarsRover {
   private state: RobotState;
-  private checkIfObstacleHandler: RobotStateHandler;
   private chainHandler: RobotStateHandler;
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
@@ -51,7 +50,6 @@ export class MarsRover {
       command: Command.NONE,
     });
 
-    this.checkIfObstacleHandler = checkIfObstacleFactory(planet);
     this.chainHandler = chainHandlerFactory([
       handleMovement,
       handleOverflowFactory(planet),
