@@ -112,20 +112,27 @@ describe('MarsRover', () => {
         when('RFFFF', '1:0:E'),
         when('RFFFFF', '2:0:E'),
       ]);
-    });
 
-    describe('when the 3x3 planet has obstacles', () => {
-      describeWith(runner, 'should move if no obstacles on his path', [
-        when('FF', '0:2:N', []),
-        when('FF', '0:2:N', [{ x: 1, y: 0 }]),
-        when('FFRFFRFF', '2:0:S', [{ x: 1, y: 0 }]),
-        when('FFRFFRFFRFFR', '0:0:N', [{ x: 1, y: 1 }]),
-      ]);
+      describe('when the 3x3 planet has obstacles', () => {
+        describeWith(runner, 'should move if no obstacles on his path', [
+          when('FF', '0:2:N', []),
+          when('FF', '0:2:N', [{ x: 1, y: 0 }]),
+          when('FFRFFRFF', '2:0:S', [{ x: 1, y: 0 }]),
+          when('FFRFFRFFRFFR', '0:0:N', [{ x: 1, y: 1 }]),
+        ]);
 
-      describeWith(runner, 'should stop if he touches an obstacle', [
-        when('FF', '0:0:N', [{ x: 0, y: 1 }]),
-        when('FF', '0:1:N', [{ x: 0, y: 2 }]),
-      ]);
+        describeWith(runner, 'should stop if he touches an obstacle', [
+          when('FF', '0:0:N', [{ x: 0, y: 1 }]),
+          when('FF', '0:1:N', [{ x: 0, y: 2 }]),
+        ]);
+
+        describeWith(runner, 'should not wrap if there are obstacles in the other side of the planet', [
+          when('B', '0:0:N', [{ x: 0, y: 2 }]),
+          when('LF', '0:0:W', [{ x: 2, y: 0 }]),
+          when('RFFF', '2:0:E', [{ x: 0, y: 0 }]),
+          when('FFF', '0:2:N', [{ x: 0, y: 0 }]),
+        ]);
+      });
     });
   });
 });
