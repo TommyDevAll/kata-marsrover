@@ -1,7 +1,7 @@
-import { RobotState } from '../state/RobotState';
 import { Condition } from '../model/Condition';
-import { Planet } from '../model/Planet';
 import { Coordinates } from '../model/Coordinates';
+import { Planet } from '../model/Planet';
+import { RobotState } from '../state/RobotState';
 
 export const checkIfObstacleFactory = (planet: Planet) => (state: RobotState) => {
   if (planet.isObstacle(state.props.target)) {
