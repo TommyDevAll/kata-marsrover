@@ -28,7 +28,7 @@ class State {
     readonly coordinates: Coordinates,
     readonly target: Coordinates,
     readonly direction: Direction,
-    readonly condition: Condition = Condition.IDLE,
+    readonly condition: Condition,
   ) {}
 }
 
@@ -41,18 +41,18 @@ const front: StateHandler = (state: State) => {
 };
 
 const right: StateHandler = (state: State) => {
-  return new State(state.coordinates, state.coordinates, state.direction.right());
+  return new State(state.coordinates, state.coordinates, state.direction.right(), state.condition);
 };
 
 const left: StateHandler = (state: State) => {
-  return new State(state.coordinates, state.coordinates, state.direction.left());
+  return new State(state.coordinates, state.coordinates, state.direction.left(), state.condition);
 };
 
 const nothing = (state: State) => state;
 
 const completeMovement: StateHandler = (state: State) => {
   if (state.condition === Condition.MOVING) {
-    return new State(state.target, state.target, state.direction);
+    return new State(state.target, state.target, state.direction, state.condition);
   }
   return state;
 };
@@ -77,7 +77,7 @@ export class Rover {
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
-    this.state = new State(position, position, stringToDirection.get(direction) || NORTH);
+    this.state = new State(position, position, stringToDirection.get(direction) || NORTH, Condition.IDLE);
   }
 
   move(commands: string) {
