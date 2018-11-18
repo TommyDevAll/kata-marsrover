@@ -1,7 +1,7 @@
 import { Coordinates } from './Coordinates';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './Direction';
 import { Planet } from './Planet';
-import { Commands, Condition, State } from './State';
+import { Commands, Condition, State, StateHandler } from './State';
 
 const stringToDirection: Map<string, Direction> = new Map<string, Direction>([
   ['N', NORTH],
@@ -32,31 +32,35 @@ const stringToCommand: Map<string, Commands> = new Map<string, Commands>([
 ]);
 
 const back: StateHandler = (state: State) => {
-  return new State(state.coordinates, state.direction.back(state.coordinates), state.direction, Condition.MOVING);
+  return state.update({
+    target: state.direction.back(state.coordinates),
+    condition: Condition.MOVING,
+  });
 };
 
 const front: StateHandler = (state: State) => {
-  return new State(state.coordinates, state.direction.front(state.coordinates), state.direction, Condition.MOVING);
+  return state.update({
+    target: state.direction.front(state.coordinates),
+    condition: Condition.MOVING,
+  });
 };
 
 const right: StateHandler = (state: State) => {
-  return new State(state.coordinates, state.coordinates, state.direction.right(), state.condition);
+  return state.update({ direction: state.direction.right() });
 };
 
 const left: StateHandler = (state: State) => {
-  return new State(state.coordinates, state.coordinates, state.direction.left(), state.condition);
+  return state.update({ direction: state.direction.left() });
 };
 
 const nothing = (state: State) => state;
 
 const completeMovement: StateHandler = (state: State) => {
   if (state.condition === Condition.MOVING) {
-    return new State(state.target, state.target, state.direction, state.condition);
+    return state.update({ coordinates: state.target });
   }
   return state;
 };
-
-type StateHandler = (state: State) => State;
 
 const commandHandlers: Map<Commands, StateHandler> = new Map<Commands, StateHandler>([
   [Commands.LEFT, left],
@@ -76,7 +80,12 @@ export class Rover {
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
-    this.state = new State(position, position, stringToDirection.get(direction) || NORTH, Condition.IDLE);
+    this.state = new State({
+      coordinates: position,
+      target: position,
+      direction: stringToDirection.get(direction) || NORTH,
+      condition: Condition.IDLE,
+    });
   }
 
   move(commands: string) {
@@ -93,12 +102,15 @@ export class Rover {
   private handleOverflow(state: State) {
     const wrap = (value: number) => (value >= 0 ? value % this.planet.size : this.planet.size + value);
     const newPosition = new Coordinates(wrap(state.target.x), wrap(state.target.y));
-    return new State(state.coordinates, newPosition, state.direction, state.condition);
+    return state.update({ target: newPosition });
   }
 
   private checkIfObstacle(state: State) {
     if (this.planet.isObstacle(state.target)) {
-      return new State(state.coordinates, state.coordinates, state.direction, Condition.BLOCKED);
+      return state.update( {
+        target: state.coordinates,
+        condition: Condition.BLOCKED,
+      });
     }
     return state;
   }

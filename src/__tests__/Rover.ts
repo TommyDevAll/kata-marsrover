@@ -123,6 +123,7 @@ describe('Rover', () => {
       ]);
 
       describeWith(runner, 'should stop if he touches an obstacle', [
+        when('FF', '0:0:N', [{ x: 0, y: 1 }]),
         when('FF', '0:1:N', [{ x: 0, y: 2 }]),
       ]);
     });
