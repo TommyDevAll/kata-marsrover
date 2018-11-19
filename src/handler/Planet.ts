@@ -4,13 +4,8 @@ import { Planet } from '../model/Planet';
 import { RobotState } from '../state/RobotState';
 
 export const checkObstacle = (planet: Planet) => (state: RobotState) => {
-  if (planet.isObstacle(state.props.target)) {
-    return state.update({
-      target: state.props.coordinates,
-      condition: Condition.BLOCKED,
-    });
-  }
-  return state;
+  const condition = planet.isObstacle(state.props.target) ? Condition.BLOCKED : state.props.condition;
+  return state.update({ condition });
 };
 
 export const handleOverflow = (planet: Planet) => (state: RobotState) => {

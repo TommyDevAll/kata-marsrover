@@ -1,6 +1,5 @@
-import { chain } from './handler/Chain';
 import { discardCommandIfBlocked, nothing } from './handler/Command';
-import { completeMovement, handleMovement, resetCommand } from './handler/Movement';
+import { completeMovement, handleMovement } from './handler/Movement';
 import { checkObstacle, handleOverflow } from './handler/Planet';
 import { RobotStateHandler } from './handler/RobotStateHandler';
 import { sameCondition } from './handler/SameCondition';
@@ -53,7 +52,7 @@ export class MarsRover {
     });
 
     this.conditionHandlers = new Map<Condition, RobotStateHandler>([
-      [Condition.IDLE, chain([handleMovement, resetCommand])],
+      [Condition.IDLE, handleMovement],
       [Condition.BLOCKED, discardCommandIfBlocked],
       [Condition.MOVING, sameCondition([handleOverflow(planet), checkObstacle(planet), completeMovement])],
     ]);
@@ -63,7 +62,6 @@ export class MarsRover {
     [...commands].forEach((command: string) => {
       const nextCommand = stringToCommand.get(command) || Command.NONE;
       const nextCommandState = this.state.update({ command: nextCommand });
-
       this.state = this.next(nextCommandState);
     });
 
