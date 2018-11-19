@@ -3,6 +3,7 @@ import { Condition } from '../model/Condition';
 import { RobotState } from '../state/RobotState';
 
 import { RobotStateHandler } from './RobotStateHandler';
+import { nothing } from './Command';
 
 const back: RobotStateHandler = (state: RobotState) => {
   return state.update({
@@ -26,8 +27,6 @@ const left: RobotStateHandler = (state: RobotState) => {
   return state.update({ direction: state.props.direction.left() });
 };
 
-const nothing: RobotStateHandler = (state: RobotState) => state;
-
 const movementHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([
   [Command.LEFT, left],
   [Command.RIGHT, right],
@@ -38,9 +37,8 @@ const movementHandlers: Map<Command, RobotStateHandler> = new Map<Command, Robot
 export const handleMovement: RobotStateHandler = (state: RobotState) =>
   (movementHandlers.get(state.props.command) || nothing)(state);
 
+export const resetCommand: RobotStateHandler = (state: RobotState) => state.update({ command: Command.NONE });
+
 export const completeMovement: RobotStateHandler = (state: RobotState) => {
-  if (state.props.condition === Condition.MOVING) {
-    return state.update({ coordinates: state.props.target, condition: Condition.IDLE });
-  }
-  return state;
+  return state.update({ coordinates: state.props.target, condition: Condition.IDLE });
 };

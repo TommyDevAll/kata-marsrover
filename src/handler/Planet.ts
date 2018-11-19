@@ -3,7 +3,7 @@ import { Coordinates } from '../model/Coordinates';
 import { Planet } from '../model/Planet';
 import { RobotState } from '../state/RobotState';
 
-export const checkIfObstacle = (planet: Planet) => (state: RobotState) => {
+export const checkObstacle = (planet: Planet) => (state: RobotState) => {
   if (planet.isObstacle(state.props.target)) {
     return state.update({
       target: state.props.coordinates,

@@ -1,8 +1,9 @@
-import { chainHandlers } from './handler/ChainHandlers';
-import { discardCommandIfBlocked } from './handler/Command';
-import { completeMovement, handleMovement } from './handler/Movement';
-import { checkIfObstacle, handleOverflow } from './handler/Planet';
+import { chain } from './handler/Chain';
+import { discardCommandIfBlocked, nothing } from './handler/Command';
+import { completeMovement, handleMovement, resetCommand } from './handler/Movement';
+import { checkObstacle, handleOverflow } from './handler/Planet';
 import { RobotStateHandler } from './handler/RobotStateHandler';
+import { sameCondition } from './handler/SameCondition';
 import { Command } from './model/Command';
 import { Condition } from './model/Condition';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
@@ -39,7 +40,7 @@ const printPosition = (state: RobotState) => {
 
 export class MarsRover {
   private state: RobotState;
-  private readonly chainHandler: RobotStateHandler;
+  private readonly conditionHandlers: Map<Condition, RobotStateHandler>;
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
@@ -51,21 +52,26 @@ export class MarsRover {
       command: Command.NONE,
     });
 
-    this.chainHandler = chainHandlers([
-      discardCommandIfBlocked,
-      handleMovement,
-      handleOverflow(planet),
-      checkIfObstacle(planet),
-      completeMovement,
+    this.conditionHandlers = new Map<Condition, RobotStateHandler>([
+      [Condition.IDLE, chain([handleMovement, resetCommand])],
+      [Condition.BLOCKED, discardCommandIfBlocked],
+      [Condition.MOVING, sameCondition([handleOverflow(planet), checkObstacle(planet), completeMovement])],
     ]);
   }
 
   move(commands: string) {
     [...commands].forEach((command: string) => {
       const nextCommand = stringToCommand.get(command) || Command.NONE;
-      this.state = this.chainHandler(this.state.update({ command: nextCommand }));
+      const nextCommandState = this.state.update({ command: nextCommand });
+
+      this.state = this.next(nextCommandState);
     });
 
     return printPosition(this.state);
+  }
+
+  private next(state: RobotState): RobotState {
+    const nextState = (this.conditionHandlers.get(state.props.condition) || nothing)(state);
+    return nextState.props.condition === state.props.condition ? nextState : this.next(nextState);
   }
 }
