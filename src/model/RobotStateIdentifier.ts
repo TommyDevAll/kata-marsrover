@@ -1,4 +1,4 @@
-export enum Condition {
+export enum RobotStateIdentifier {
   IDLE,
   MOVING_FRONT,
   MOVING_BACK,

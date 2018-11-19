@@ -4,7 +4,7 @@ import { checkObstacle, handleOverflow } from './handler/Planet';
 import { RobotStateHandler } from './handler/RobotStateHandler';
 import { sameCondition } from './handler/SameCondition';
 import { Command } from './model/Command';
-import { Condition } from './model/Condition';
+import { RobotStateIdentifier } from './model/RobotStateIdentifier';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
 import { Planet } from './model/Planet';
 import { RobotState } from './state/RobotState';
@@ -40,25 +40,25 @@ const printPosition = (state: RobotState) => {
 
 export class MarsRover {
   private state: RobotState;
-  private readonly conditionHandlers: Map<Condition, RobotStateHandler>;
+  private readonly conditionHandlers: Map<RobotStateIdentifier, RobotStateHandler>;
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
-    this.state = new State({
+    this.state = new State(RobotStateIdentifier.IDLE, {
       coordinates: position,
       target: position,
       direction: stringToDirection.get(direction) || NORTH,
-      condition: Condition.IDLE,
+      condition: RobotStateIdentifier.IDLE,
       command: Command.NONE,
     });
 
     const toFront = (state: RobotState) => state.props.direction.front(state.props.coordinates);
     const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
-    this.conditionHandlers = new Map<Condition, RobotStateHandler>([
-      [Condition.IDLE, chain([handleOverflow(planet), handleMovement])],
-      [Condition.BLOCKED, nothing],
-      [Condition.MOVING_FRONT, sameCondition([checkObstacle(planet, toFront), completeMovement(toFront)])],
-      [Condition.MOVING_BACK, sameCondition([checkObstacle(planet, toBack), completeMovement(toBack)])],
+    this.conditionHandlers = new Map<RobotStateIdentifier, RobotStateHandler>([
+      [RobotStateIdentifier.IDLE, chain([handleOverflow(planet), handleMovement])],
+      [RobotStateIdentifier.BLOCKED, nothing],
+      [RobotStateIdentifier.MOVING_FRONT, sameCondition([checkObstacle(planet, toFront), completeMovement(toFront)])],
+      [RobotStateIdentifier.MOVING_BACK, sameCondition([checkObstacle(planet, toBack), completeMovement(toBack)])],
     ]);
   }
 

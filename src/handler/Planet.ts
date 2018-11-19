@@ -1,4 +1,4 @@
-import { Condition } from '../model/Condition';
+import { RobotStateIdentifier } from '../model/RobotStateIdentifier';
 import { Coordinates } from '../model/Coordinates';
 import { Planet } from '../model/Planet';
 import { RobotState } from '../state/RobotState';
@@ -7,7 +7,7 @@ const wrap = (value: number, size: number) => (value >= 0 ? value % size : size 
 const wrapCoords = (coords: Coordinates, size: number) => new Coordinates(wrap(coords.x, size), wrap(coords.y, size));
 
 export const checkObstacle = (planet: Planet, at: (state: RobotState) => Coordinates) => (state: RobotState) => {
-  const condition = planet.isObstacle(wrapCoords(at(state), planet.size)) ? Condition.BLOCKED : state.props.condition;
+  const condition = planet.isObstacle(wrapCoords(at(state), planet.size)) ? RobotStateIdentifier.BLOCKED : state.props.condition;
   return state.update({ condition });
 };
 

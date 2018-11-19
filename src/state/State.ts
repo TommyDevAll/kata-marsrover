@@ -1,11 +1,15 @@
-export class State<T> {
-  constructor(readonly props: T) {}
+export class State<I, T> {
+  constructor(readonly identifier: I, readonly props: T) {}
 
-  update(props: Partial<T>): State<T> {
+  to(identifier: I): State<I, T> {
+    return new State(identifier, this.props);
+  }
+
+  update(props: Partial<T>): State<I, T> {
     const first = this.props as any;
     const second = props as any;
     const merged = { ...first, ...second };
-    return new State(merged as T);
+    return new State(this.identifier, merged as T);
   }
 }
 

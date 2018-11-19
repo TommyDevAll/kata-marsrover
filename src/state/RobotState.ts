@@ -1,5 +1,5 @@
 import { Command } from '../model/Command';
-import { Condition } from '../model/Condition';
+import { RobotStateIdentifier } from '../model/RobotStateIdentifier';
 import { Coordinates } from '../model/Coordinates';
 import { Direction } from '../model/Direction';
 
@@ -8,8 +8,8 @@ import { State } from './State';
 export interface RobotStateProperties {
   readonly coordinates: Coordinates;
   readonly direction: Direction;
-  readonly condition: Condition;
+  readonly condition: RobotStateIdentifier;
   readonly command: Command;
 }
 
-export type RobotState = State<RobotStateProperties>;
+export type RobotState = State<RobotStateIdentifier, RobotStateProperties>;
