@@ -3,13 +3,14 @@ import { Coordinates } from '../model/Coordinates';
 import { Planet } from '../model/Planet';
 import { RobotState } from '../state/RobotState';
 
-export const checkObstacle = (planet: Planet) => (state: RobotState) => {
-  const condition = planet.isObstacle(state.props.target) ? Condition.BLOCKED : state.props.condition;
+const wrap = (value: number, size: number) => (value >= 0 ? value % size : size + value);
+const wrapCoords = (coords: Coordinates, size: number) => new Coordinates(wrap(coords.x, size), wrap(coords.y, size));
+
+export const checkObstacle = (planet: Planet, at: (state: RobotState) => Coordinates) => (state: RobotState) => {
+  const condition = planet.isObstacle(wrapCoords(at(state), planet.size)) ? Condition.BLOCKED : state.props.condition;
   return state.update({ condition });
 };
 
 export const handleOverflow = (planet: Planet) => (state: RobotState) => {
-  const wrap = (value: number) => (value >= 0 ? value % planet.size : planet.size + value);
-  const newPosition = new Coordinates(wrap(state.props.target.x), wrap(state.props.target.y));
-  return state.update({ target: newPosition });
+  return state.update({ coordinates: wrapCoords(state.props.coordinates, planet.size) });
 };

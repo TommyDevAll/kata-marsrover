@@ -7,7 +7,6 @@ import { State } from './State';
 
 export interface RobotStateProperties {
   readonly coordinates: Coordinates;
-  readonly target: Coordinates;
   readonly direction: Direction;
   readonly condition: Condition;
   readonly command: Command;

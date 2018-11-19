@@ -1,4 +1,4 @@
-import { discardCommandIfBlocked, nothing } from './handler/Command';
+import { nothing } from './handler/Command';
 import { completeMovement, handleMovement } from './handler/Movement';
 import { checkObstacle, handleOverflow } from './handler/Planet';
 import { RobotStateHandler } from './handler/RobotStateHandler';
@@ -9,6 +9,7 @@ import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
 import { Planet } from './model/Planet';
 import { RobotState } from './state/RobotState';
 import { State } from './state/State';
+import { chain } from './handler/Chain';
 
 const stringToDirection: Map<string, Direction> = new Map<string, Direction>([
   ['N', NORTH],
@@ -51,10 +52,13 @@ export class MarsRover {
       command: Command.NONE,
     });
 
+    const toFront = (state: RobotState) => state.props.direction.front(state.props.coordinates);
+    const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
     this.conditionHandlers = new Map<Condition, RobotStateHandler>([
-      [Condition.IDLE, handleMovement],
-      [Condition.BLOCKED, discardCommandIfBlocked],
-      [Condition.MOVING, sameCondition([handleOverflow(planet), checkObstacle(planet), completeMovement])],
+      [Condition.IDLE, chain([handleOverflow(planet), handleMovement])],
+      [Condition.BLOCKED, nothing],
+      [Condition.MOVING_FRONT, sameCondition([checkObstacle(planet, toFront), completeMovement(toFront)])],
+      [Condition.MOVING_BACK, sameCondition([checkObstacle(planet, toBack), completeMovement(toBack)])],
     ]);
   }
 

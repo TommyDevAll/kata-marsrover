@@ -1,5 +1,6 @@
 export enum Condition {
   IDLE,
-  MOVING,
+  MOVING_FRONT,
+  MOVING_BACK,
   BLOCKED,
 }
