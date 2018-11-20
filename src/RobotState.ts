@@ -1,8 +1,8 @@
-import { Command } from '../model/Command';
-import { Coordinates } from '../model/Coordinates';
-import { Direction } from '../model/Direction';
+import { Command } from './model/Command';
+import { Coordinates } from './model/Coordinates';
+import { Direction } from './model/Direction';
 
-import { State, StateHandler } from './State';
+import { State, StateHandler } from './state/State';
 
 export enum RobotStateId {
   IDLE,

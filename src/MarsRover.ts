@@ -5,8 +5,8 @@ import { checkObstacle, handleOverflow } from './handler/Planet';
 import { Command } from './model/Command';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
 import { Planet } from './model/Planet';
+import { RobotState, RobotStateId } from './RobotState';
 import { all } from './state/All';
-import { RobotState, RobotStateId } from './state/RobotState';
 import { State } from './state/State';
 import { StateMachine, StateMachineBuilder } from './state/StateMachine';
 

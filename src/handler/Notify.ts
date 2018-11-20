@@ -1,5 +1,5 @@
 import { Direction, EAST, NORTH, SOUTH, WEST } from '../model/Direction';
-import { RobotState } from '../state/RobotState';
+import { RobotState } from '../RobotState';
 
 const directionToString: Map<Direction, string> = new Map<Direction, string>([
   [NORTH, 'N'],

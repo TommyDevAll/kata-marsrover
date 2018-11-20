@@ -1,5 +1,5 @@
 import { Coordinates } from '../model/Coordinates';
-import { RobotState, RobotStateHandler, RobotStateId } from '../state/RobotState';
+import { RobotState, RobotStateHandler, RobotStateId } from '../RobotState';
 
 export const front: RobotStateHandler = (state: RobotState) => {
   return state.to(RobotStateId.MOVING_FRONT);

@@ -1,5 +1,5 @@
 import { Command } from '../model/Command';
-import { RobotState, RobotStateHandler, RobotStateId } from '../state/RobotState';
+import { RobotState, RobotStateHandler, RobotStateId } from '../RobotState';
 
 import { back, front, left, right } from './Movement';
 

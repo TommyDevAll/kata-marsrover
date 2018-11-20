@@ -1,4 +1,4 @@
-import { RobotState } from './RobotState';
+import { RobotState } from '../RobotState';
 import { State, StateHandler } from './State';
 
 export class StateMachine<S extends State<any, any>> {
