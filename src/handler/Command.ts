@@ -1,10 +1,11 @@
 import { Command } from '../model/Command';
 import { RobotState, RobotStateHandler } from '../state/RobotState';
+import { State, StateHandler } from '../state/State';
 
 import { all } from './All';
 import { back, front, left, right } from './Movement';
 
-export const nothing: RobotStateHandler = (state: RobotState) => state;
+export const nothing: StateHandler = <S extends State<any, any>>(state: State<S['identifier'], S['props']>) => state;
 
 export const resetCommand: RobotStateHandler = (state: RobotState) => state.update({ command: Command.NONE });
 

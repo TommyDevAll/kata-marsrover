@@ -7,7 +7,7 @@ import { Command } from './model/Command';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
 import { Planet } from './model/Planet';
 import { RobotState, RobotStateHandler, RobotStateIdentifier } from './state/RobotState';
-import { State } from './state/State';
+import { State, StateHandler } from './state/State';
 
 const stringToDirection: Map<string, Direction> = new Map<string, Direction>([
   ['N', NORTH],
@@ -35,6 +35,15 @@ const printPosition = (state: RobotState) => {
   const positionString = `${state.props.coordinates.x}:${state.props.coordinates.y}`;
   return `${positionString}:${directionString}`;
 };
+
+export class StateMachine<S extends State<any, any>> {
+  constructor(private handlers: Map<S['identifier'], StateHandler>) {}
+
+  private next(state: RobotState): RobotState {
+    const nextState = (this.handlers.get(state.identifier) || nothing)(state);
+    return nextState.identifier === state.identifier ? nextState : this.next(nextState);
+  }
+}
 
 export class MarsRover {
   private state: RobotState;
