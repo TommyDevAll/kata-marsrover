@@ -1,5 +1,5 @@
 import { all } from './handler/All';
-import { handleCommand, idle, ignore } from './handler/Command';
+import { handleCommand, idle, ignore, resetCommand } from './handler/Command';
 import { completeMovement } from './handler/Movement';
 import { notifyPosition } from './handler/Notify';
 import { checkObstacle, handleOverflow } from './handler/Planet';
@@ -44,11 +44,11 @@ export class MarsRover {
     const notifyPositionHandler = notifyPosition(this.updatePosition.bind(this));
 
     this.machine = new StateMachineBuilder<RobotState>()
-      .with(RobotStateId.IDLE, handleCommand)
+      .with(RobotStateId.IDLE, handleCommand, resetCommand)
       .with(RobotStateId.BLOCKED, notifyPositionHandler)
       .with(RobotStateId.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)]))
       .with(RobotStateId.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)]))
-      .with(RobotStateId.MOVED, all([handleOverflow(planet), notifyPositionHandler, idle]))
+      .with(RobotStateId.MOVED, sameIdentifier([handleOverflow(planet), notifyPositionHandler, idle]))
       .build();
   }
 

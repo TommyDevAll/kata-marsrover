@@ -3,6 +3,7 @@ import { RobotState, RobotStateHandler, RobotStateId } from '../state/RobotState
 
 import { all } from './All';
 import { back, front, left, right } from './Movement';
+import { sameIdentifier } from './SameIdentifier';
 
 export const idle: RobotStateHandler = (state: RobotState) => state.to(RobotStateId.IDLE);
 
@@ -16,8 +17,8 @@ export const handleCommand: RobotStateHandler = (state: RobotState) => {
 };
 
 const commandHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([
-  [Command.LEFT, all([left, resetCommand])],
-  [Command.RIGHT, all([right, resetCommand])],
-  [Command.FORWARD, all([front, resetCommand])],
-  [Command.BACKWARD, all([back, resetCommand])],
+  [Command.LEFT, left],
+  [Command.RIGHT, right],
+  [Command.FORWARD, front],
+  [Command.BACKWARD, back],
 ]);
