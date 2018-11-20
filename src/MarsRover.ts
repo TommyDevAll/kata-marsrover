@@ -37,9 +37,9 @@ const printPosition = (state: RobotState) => {
 };
 
 export class StateMachine<S extends State<any, any>> {
-  constructor(private handlers: Map<S['identifier'], StateHandler>) {}
+  constructor(private handlers: Map<S['identifier'], StateHandler<S>>) {}
 
-  private next(state: RobotState): RobotState {
+  next(state: RobotState): RobotState {
     const nextState = (this.handlers.get(state.identifier) || nothing)(state);
     return nextState.identifier === state.identifier ? nextState : this.next(nextState);
   }
@@ -47,7 +47,7 @@ export class StateMachine<S extends State<any, any>> {
 
 export class MarsRover {
   private state: RobotState;
-  private readonly handlers: Map<RobotStateIdentifier, RobotStateHandler>;
+  private machine: StateMachine<RobotState>;
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
@@ -60,25 +60,25 @@ export class MarsRover {
     const toFront = (state: RobotState) => state.props.direction.front(state.props.coordinates);
     const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
 
-    this.handlers = new Map<RobotStateIdentifier, RobotStateHandler>([
-      [RobotStateIdentifier.IDLE, all([handleOverflow(planet), handleCommand])],
-      [RobotStateIdentifier.BLOCKED, nothing],
-      [RobotStateIdentifier.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)])],
-      [RobotStateIdentifier.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)])],
-    ]);
+    this.machine = new StateMachine<RobotState>(
+      new Map<RobotStateIdentifier, RobotStateHandler>([
+        [RobotStateIdentifier.IDLE, all([handleOverflow(planet), handleCommand])],
+        [RobotStateIdentifier.BLOCKED, nothing],
+        [
+          RobotStateIdentifier.MOVING_FRONT,
+          sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)]),
+        ],
+        [RobotStateIdentifier.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)])],
+      ]),
+    );
   }
 
   move(commands: string) {
     [...commands].forEach((command: string) => {
       const nextCommand = stringToCommand.get(command) || Command.NONE;
-      this.state = this.next(this.state.update({ command: nextCommand }));
+      this.state = this.machine.next(this.state.update({ command: nextCommand }));
     });
 
     return printPosition(this.state);
-  }
-
-  private next(state: RobotState): RobotState {
-    const nextState = (this.handlers.get(state.identifier) || nothing)(state);
-    return nextState.identifier === state.identifier ? nextState : this.next(nextState);
   }
 }
