@@ -1,4 +1,4 @@
-import { chain } from './handler/Chain';
+import { all } from './handler/All';
 import { handleCommand, nothing } from './handler/Command';
 import { completeMovement } from './handler/Movement';
 import { checkObstacle, handleOverflow } from './handler/Planet';
@@ -52,7 +52,7 @@ export class MarsRover {
     const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
 
     this.handlers = new Map<RobotStateIdentifier, RobotStateHandler>([
-      [RobotStateIdentifier.IDLE, chain([handleOverflow(planet), handleCommand])],
+      [RobotStateIdentifier.IDLE, all([handleOverflow(planet), handleCommand])],
       [RobotStateIdentifier.BLOCKED, nothing],
       [RobotStateIdentifier.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)])],
       [RobotStateIdentifier.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)])],
