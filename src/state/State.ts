@@ -1,4 +1,8 @@
-export class State<I, T> {
+export interface Identifiable {
+  readonly identifier: any;
+}
+
+export class State<I, T> implements Identifiable {
   constructor(readonly identifier: I, readonly props: T) {}
 
   to(identifier: I): State<I, T> {

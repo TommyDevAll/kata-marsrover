@@ -1,7 +1,7 @@
-import { RobotState, RobotStateHandler } from '../state/RobotState';
+import { Identifiable, StateHandler } from '../state/State';
 
-export const sameIdentifier = (handlers: RobotStateHandler[]) => (state: RobotState) => {
-  let temporaryState: RobotState = state.update({});
+export const sameIdentifier = <T, S extends Identifiable>(handlers: Array<StateHandler<S>>) => (state: S) => {
+  let temporaryState: S = state;
   handlers.every(handler => {
     const condition = temporaryState.identifier;
     temporaryState = handler(temporaryState);
