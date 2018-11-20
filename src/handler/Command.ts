@@ -3,8 +3,6 @@ import { RobotState, RobotStateHandler, RobotStateId } from '../RobotState';
 
 import { back, front, left, right } from './Movement';
 
-export const idle: RobotStateHandler = (state: RobotState) => state.to(RobotStateId.IDLE);
-
 export const resetCommand: RobotStateHandler = (state: RobotState) => state.update({ command: Command.NONE });
 
 export const handleCommand: RobotStateHandler = (state: RobotState) => {

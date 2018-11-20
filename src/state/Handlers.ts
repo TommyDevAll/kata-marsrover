@@ -11,3 +11,9 @@ export const all = <S extends State<any, any>>(handlers: Array<StateHandler<Stat
   });
   return nextState;
 };
+
+export const to = <S extends State<any, any>>(identifier: S['identifier']) => (
+  state: State<S['identifier'], S['props']>,
+) => {
+  return state.to(identifier);
+};
