@@ -1,12 +1,12 @@
 import { Coordinates } from '../model/Coordinates';
-import { RobotState, RobotStateHandler, RobotStateIdentifier } from '../state/RobotState';
+import { RobotState, RobotStateHandler, RobotStateId } from '../state/RobotState';
 
 export const front: RobotStateHandler = (state: RobotState) => {
-  return state.to(RobotStateIdentifier.MOVING_FRONT);
+  return state.to(RobotStateId.MOVING_FRONT);
 };
 
 export const back: RobotStateHandler = (state: RobotState) => {
-  return state.to(RobotStateIdentifier.MOVING_BACK);
+  return state.to(RobotStateId.MOVING_BACK);
 };
 
 export const right: RobotStateHandler = (state: RobotState) => {
@@ -18,5 +18,5 @@ export const left: RobotStateHandler = (state: RobotState) => {
 };
 
 export const completeMovement = (toPosition: (state: RobotState) => Coordinates) => (state: RobotState) => {
-  return state.update({ coordinates: toPosition(state) }).to(RobotStateIdentifier.IDLE);
+  return state.update({ coordinates: toPosition(state) }).to(RobotStateId.IDLE);
 };

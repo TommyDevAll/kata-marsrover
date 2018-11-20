@@ -6,7 +6,7 @@ import { sameIdentifier } from './handler/SameIdentifier';
 import { Command } from './model/Command';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
 import { Planet } from './model/Planet';
-import { RobotState, RobotStateHandler, RobotStateIdentifier } from './state/RobotState';
+import { RobotState, RobotStateHandler, RobotStateId } from './state/RobotState';
 import { State, StateHandler } from './state/State';
 
 const stringToDirection: Map<string, Direction> = new Map<string, Direction>([
@@ -45,13 +45,26 @@ export class StateMachine<S extends State<any, any>> {
   }
 }
 
+export class StateMachineBuilder<S extends State<any, any>> {
+  private handlers: Map<S['identifier'], StateHandler<S>> = new Map<S['identifier'], StateHandler<S>>();
+
+  with(identifier: S['identifier'], handler: StateHandler<S>) {
+    this.handlers.set(identifier, handler);
+    return this;
+  }
+
+  build() {
+    return new StateMachine<S>(this.handlers);
+  }
+}
+
 export class MarsRover {
   private state: RobotState;
   private machine: StateMachine<RobotState>;
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
-    this.state = new State(RobotStateIdentifier.IDLE, {
+    this.state = new State(RobotStateId.IDLE, {
       coordinates: position,
       direction: stringToDirection.get(direction) || NORTH,
       command: Command.NONE,
@@ -60,17 +73,12 @@ export class MarsRover {
     const toFront = (state: RobotState) => state.props.direction.front(state.props.coordinates);
     const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
 
-    this.machine = new StateMachine<RobotState>(
-      new Map<RobotStateIdentifier, RobotStateHandler>([
-        [RobotStateIdentifier.IDLE, all([handleOverflow(planet), handleCommand])],
-        [RobotStateIdentifier.BLOCKED, nothing],
-        [
-          RobotStateIdentifier.MOVING_FRONT,
-          sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)]),
-        ],
-        [RobotStateIdentifier.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)])],
-      ]),
-    );
+    this.machine = new StateMachineBuilder<RobotState>()
+      .with(RobotStateId.IDLE, all([handleOverflow(planet), handleCommand]))
+      .with(RobotStateId.BLOCKED, nothing)
+      .with(RobotStateId.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)]))
+      .with(RobotStateId.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)]))
+      .build();
   }
 
   move(commands: string) {

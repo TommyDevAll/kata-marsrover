@@ -4,7 +4,7 @@ import { Direction } from '../model/Direction';
 
 import { State, StateHandler } from './State';
 
-export enum RobotStateIdentifier {
+export enum RobotStateId {
   IDLE,
   MOVING_FRONT,
   MOVING_BACK,
@@ -17,5 +17,5 @@ export interface RobotStateProperties {
   readonly command: Command;
 }
 
-export type RobotState = State<RobotStateIdentifier, RobotStateProperties>;
+export type RobotState = State<RobotStateId, RobotStateProperties>;
 export type RobotStateHandler = StateHandler<RobotState>;
