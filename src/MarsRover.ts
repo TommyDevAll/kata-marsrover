@@ -30,24 +30,22 @@ export class MarsRover {
   private position = '';
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
-    const position = { x, y };
     this.state = new State(RobotStateId.IDLE, {
-      coordinates: position,
+      coordinates: { x, y },
       direction: stringToDirection.get(direction) || NORTH,
       command: Command.NONE,
     });
 
     const toFront = (state: RobotState) => state.props.direction.front(state.props.coordinates);
     const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
-
-    const notifyPositionHandler = notifyPosition(this.updatePosition.bind(this));
+    const positionListener = (updatedPosition: string) => (this.position = updatedPosition);
 
     this.machine = new StateMachineBuilder<RobotState>()
       .with(RobotStateId.IDLE, handleCommand, resetCommand)
-      .with(RobotStateId.BLOCKED, notifyPositionHandler)
+      .with(RobotStateId.BLOCKED, notifyPosition(positionListener))
       .with(RobotStateId.MOVING_FRONT, all([checkObstacle(planet, toFront), completeMovement(toFront)]))
       .with(RobotStateId.MOVING_BACK, all([checkObstacle(planet, toBack), completeMovement(toBack)]))
-      .with(RobotStateId.MOVED, all([handleOverflow(planet), notifyPositionHandler, to(RobotStateId.IDLE)]))
+      .with(RobotStateId.MOVED, all([handleOverflow(planet), notifyPosition(positionListener), to(RobotStateId.IDLE)]))
       .build();
   }
 
@@ -58,9 +56,5 @@ export class MarsRover {
     });
 
     return this.position;
-  }
-
-  private updatePosition(position: string) {
-    this.position = position;
   }
 }
