@@ -23,14 +23,14 @@ const left: RobotStateHandler = (state: RobotState) => {
 
 const resetCommand: RobotStateHandler = (state: RobotState) => state.update({ command: Command.NONE });
 
-export const handleMovement: RobotStateHandler = (state: RobotState) =>
-  (movementHandlers.get(state.props.command) || nothing)(state);
+export const handleCommand: RobotStateHandler = (state: RobotState) =>
+  (commandHandlers.get(state.props.command) || nothing)(state);
 
 export const completeMovement = (toPosition: (state: RobotState) => Coordinates) => (state: RobotState) => {
   return state.update({ coordinates: toPosition(state) }).to(RobotStateIdentifier.IDLE);
 };
 
-const movementHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([
+const commandHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([
   [Command.LEFT, chain([left, resetCommand])],
   [Command.RIGHT, chain([right, resetCommand])],
   [Command.FORWARD, chain([front, resetCommand])],

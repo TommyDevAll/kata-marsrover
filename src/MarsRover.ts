@@ -1,6 +1,6 @@
 import { chain } from './handler/Chain';
 import { nothing } from './handler/Command';
-import { completeMovement, handleMovement } from './handler/Movement';
+import { completeMovement, handleCommand } from './handler/Movement';
 import { checkObstacle, handleOverflow } from './handler/Planet';
 import { sameIdentifier } from './handler/SameIdentifier';
 import { Command } from './model/Command';
@@ -52,8 +52,9 @@ export class MarsRover {
 
     const toFront = (state: RobotState) => state.props.direction.front(state.props.coordinates);
     const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
+
     this.conditionHandlers = new Map<RobotStateIdentifier, RobotStateHandler>([
-      [RobotStateIdentifier.IDLE, chain([handleOverflow(planet), handleMovement])],
+      [RobotStateIdentifier.IDLE, chain([handleOverflow(planet), handleCommand])],
       [RobotStateIdentifier.BLOCKED, nothing],
       [RobotStateIdentifier.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)])],
       [RobotStateIdentifier.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)])],
@@ -63,8 +64,7 @@ export class MarsRover {
   move(commands: string) {
     [...commands].forEach((command: string) => {
       const nextCommand = stringToCommand.get(command) || Command.NONE;
-      const nextCommandState = this.state.update({ command: nextCommand });
-      this.state = this.next(nextCommandState);
+      this.state = this.next(this.state.update({ command: nextCommand }));
     });
 
     return printPosition(this.state);
