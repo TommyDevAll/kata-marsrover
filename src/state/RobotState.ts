@@ -9,6 +9,7 @@ export enum RobotStateId {
   MOVING_FRONT,
   MOVING_BACK,
   BLOCKED,
+  MOVED,
 }
 
 export interface RobotStateProperties {

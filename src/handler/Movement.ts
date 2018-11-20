@@ -10,13 +10,13 @@ export const back: RobotStateHandler = (state: RobotState) => {
 };
 
 export const right: RobotStateHandler = (state: RobotState) => {
-  return state.update({ direction: state.props.direction.right() });
+  return state.update({ direction: state.props.direction.right() }).to(RobotStateId.MOVED);
 };
 
 export const left: RobotStateHandler = (state: RobotState) => {
-  return state.update({ direction: state.props.direction.left() });
+  return state.update({ direction: state.props.direction.left() }).to(RobotStateId.MOVED);
 };
 
 export const completeMovement = (toPosition: (state: RobotState) => Coordinates) => (state: RobotState) => {
-  return state.update({ coordinates: toPosition(state) }).to(RobotStateId.IDLE);
+  return state.update({ coordinates: toPosition(state) }).to(RobotStateId.MOVED);
 };

@@ -1,16 +1,19 @@
 import { Command } from '../model/Command';
-import { RobotState, RobotStateHandler } from '../state/RobotState';
-import { State, StateHandler } from '../state/State';
+import { RobotState, RobotStateHandler, RobotStateId } from '../state/RobotState';
 
 import { all } from './All';
 import { back, front, left, right } from './Movement';
 
-export const nothing: StateHandler = <S extends State<any, any>>(state: State<S['identifier'], S['props']>) => state;
+export const idle: RobotStateHandler = (state: RobotState) => state.to(RobotStateId.IDLE);
+
+export const ignore: RobotStateHandler = (state: RobotState) => state;
 
 export const resetCommand: RobotStateHandler = (state: RobotState) => state.update({ command: Command.NONE });
 
-export const handleCommand: RobotStateHandler = (state: RobotState) =>
-  (commandHandlers.get(state.props.command) || nothing)(state);
+export const handleCommand: RobotStateHandler = (state: RobotState) => {
+  const handler = commandHandlers.get(state.props.command);
+  return handler ? handler(state) : state;
+};
 
 const commandHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([
   [Command.LEFT, all([left, resetCommand])],

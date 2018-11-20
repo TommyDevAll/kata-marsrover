@@ -1,6 +1,7 @@
 import { all } from './handler/All';
-import { handleCommand, nothing } from './handler/Command';
+import { handleCommand, idle, ignore } from './handler/Command';
 import { completeMovement } from './handler/Movement';
+import { notifyPosition } from './handler/Notify';
 import { checkObstacle, handleOverflow } from './handler/Planet';
 import { sameIdentifier } from './handler/SameIdentifier';
 import { Command } from './model/Command';
@@ -17,13 +18,6 @@ const stringToDirection: Map<string, Direction> = new Map<string, Direction>([
   ['S', SOUTH],
 ]);
 
-const directionToString: Map<Direction, string> = new Map<Direction, string>([
-  [NORTH, 'N'],
-  [EAST, 'E'],
-  [WEST, 'W'],
-  [SOUTH, 'S'],
-]);
-
 const stringToCommand: Map<string, Command> = new Map<string, Command>([
   ['L', Command.LEFT],
   ['R', Command.RIGHT],
@@ -31,15 +25,10 @@ const stringToCommand: Map<string, Command> = new Map<string, Command>([
   ['B', Command.BACKWARD],
 ]);
 
-const printPosition = (state: RobotState) => {
-  const directionString = directionToString.get(state.props.direction) || '-';
-  const positionString = `${state.props.coordinates.x}:${state.props.coordinates.y}`;
-  return `${positionString}:${directionString}`;
-};
-
 export class MarsRover {
   private state: RobotState;
   private machine: StateMachine<RobotState>;
+  private position = '';
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
@@ -52,11 +41,14 @@ export class MarsRover {
     const toFront = (state: RobotState) => state.props.direction.front(state.props.coordinates);
     const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
 
+    const notifyPositionHandler = notifyPosition(this.updatePosition.bind(this));
+
     this.machine = new StateMachineBuilder<RobotState>()
-      .with(RobotStateId.IDLE, all([handleOverflow(planet), handleCommand]))
-      .with(RobotStateId.BLOCKED, nothing)
+      .with(RobotStateId.IDLE, handleCommand)
+      .with(RobotStateId.BLOCKED, notifyPositionHandler)
       .with(RobotStateId.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)]))
       .with(RobotStateId.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)]))
+      .with(RobotStateId.MOVED, all([handleOverflow(planet), notifyPositionHandler, idle]))
       .build();
   }
 
@@ -66,6 +58,10 @@ export class MarsRover {
       this.state = this.machine.next(this.state.update({ command: nextCommand }));
     });
 
-    return printPosition(this.state);
+    return this.position;
+  }
+
+  private updatePosition(position: string) {
+    this.position = position;
   }
 }

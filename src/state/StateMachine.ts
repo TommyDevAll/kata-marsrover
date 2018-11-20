@@ -1,5 +1,3 @@
-import { nothing } from '../handler/Command';
-
 import { RobotState } from './RobotState';
 import { State, StateHandler } from './State';
 
@@ -7,7 +5,8 @@ export class StateMachine<S extends State<any, any>> {
   constructor(private handlers: Map<S['identifier'], StateHandler<S>>) {}
 
   next(state: RobotState): RobotState {
-    const nextState = (this.handlers.get(state.identifier) || nothing)(state);
+    const handler = this.handlers.get(state.identifier);
+    const nextState = handler ? handler(state) : state;
     return nextState.identifier === state.identifier ? nextState : this.next(nextState);
   }
 }
