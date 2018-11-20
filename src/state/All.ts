@@ -1,8 +1,8 @@
-import { State, StateHandler } from '../state/State';
+import { State, StateHandler } from './State';
 
-export const sameIdentifier = <S extends State<any, any>>(
-  handlers: Array<StateHandler<State<S['identifier'], S['props']>>>,
-) => (state: State<S['identifier'], S['props']>) => {
+export const all = <S extends State<any, any>>(handlers: Array<StateHandler<State<S['identifier'], S['props']>>>) => (
+  state: State<S['identifier'], S['props']>,
+) => {
   let nextState: State<S['identifier'], S['props']> = state;
   handlers.every(handler => {
     const identifier = nextState.identifier;

@@ -1,13 +1,9 @@
 import { Command } from '../model/Command';
 import { RobotState, RobotStateHandler, RobotStateId } from '../state/RobotState';
 
-import { all } from './All';
 import { back, front, left, right } from './Movement';
-import { sameIdentifier } from './SameIdentifier';
 
 export const idle: RobotStateHandler = (state: RobotState) => state.to(RobotStateId.IDLE);
-
-export const ignore: RobotStateHandler = (state: RobotState) => state;
 
 export const resetCommand: RobotStateHandler = (state: RobotState) => state.update({ command: Command.NONE });
 

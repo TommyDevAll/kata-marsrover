@@ -1,12 +1,11 @@
-import { all } from './handler/All';
-import { handleCommand, idle, ignore, resetCommand } from './handler/Command';
+import { handleCommand, idle, resetCommand } from './handler/Command';
 import { completeMovement } from './handler/Movement';
 import { notifyPosition } from './handler/Notify';
 import { checkObstacle, handleOverflow } from './handler/Planet';
-import { sameIdentifier } from './handler/SameIdentifier';
 import { Command } from './model/Command';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
 import { Planet } from './model/Planet';
+import { all } from './state/All';
 import { RobotState, RobotStateId } from './state/RobotState';
 import { State } from './state/State';
 import { StateMachine, StateMachineBuilder } from './state/StateMachine';
@@ -46,9 +45,9 @@ export class MarsRover {
     this.machine = new StateMachineBuilder<RobotState>()
       .with(RobotStateId.IDLE, handleCommand, resetCommand)
       .with(RobotStateId.BLOCKED, notifyPositionHandler)
-      .with(RobotStateId.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)]))
-      .with(RobotStateId.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)]))
-      .with(RobotStateId.MOVED, sameIdentifier([handleOverflow(planet), notifyPositionHandler, idle]))
+      .with(RobotStateId.MOVING_FRONT, all([checkObstacle(planet, toFront), completeMovement(toFront)]))
+      .with(RobotStateId.MOVING_BACK, all([checkObstacle(planet, toBack), completeMovement(toBack)]))
+      .with(RobotStateId.MOVED, all([handleOverflow(planet), notifyPositionHandler, idle]))
       .build();
   }
 
