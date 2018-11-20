@@ -1,11 +1,11 @@
 import { Identifiable, StateHandler } from '../state/State';
 
 export const sameIdentifier = <S extends Identifiable>(handlers: Array<StateHandler<S>>) => (state: S) => {
-  let temporaryState: S = state;
+  let nextState: S = state;
   handlers.every(handler => {
-    const condition = temporaryState.identifier;
-    temporaryState = handler(temporaryState);
-    return condition === temporaryState.identifier;
+    const identifier = nextState.identifier;
+    nextState = handler(nextState);
+    return identifier === nextState.identifier;
   });
-  return temporaryState;
+  return nextState;
 };

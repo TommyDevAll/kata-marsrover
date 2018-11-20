@@ -44,9 +44,7 @@ export class MarsRover {
     const position = { x, y };
     this.state = new State(RobotStateIdentifier.IDLE, {
       coordinates: position,
-      target: position,
       direction: stringToDirection.get(direction) || NORTH,
-      condition: RobotStateIdentifier.IDLE,
       command: Command.NONE,
     });
 
