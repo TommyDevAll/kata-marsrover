@@ -38,7 +38,7 @@ const printPosition = (state: RobotState) => {
 
 export class MarsRover {
   private state: RobotState;
-  private readonly conditionHandlers: Map<RobotStateIdentifier, RobotStateHandler>;
+  private readonly handlers: Map<RobotStateIdentifier, RobotStateHandler>;
 
   constructor(x: number, y: number, direction: string, private planet: Planet) {
     const position = { x, y };
@@ -51,7 +51,7 @@ export class MarsRover {
     const toFront = (state: RobotState) => state.props.direction.front(state.props.coordinates);
     const toBack = (state: RobotState) => state.props.direction.back(state.props.coordinates);
 
-    this.conditionHandlers = new Map<RobotStateIdentifier, RobotStateHandler>([
+    this.handlers = new Map<RobotStateIdentifier, RobotStateHandler>([
       [RobotStateIdentifier.IDLE, chain([handleOverflow(planet), handleCommand])],
       [RobotStateIdentifier.BLOCKED, nothing],
       [RobotStateIdentifier.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)])],
@@ -69,7 +69,7 @@ export class MarsRover {
   }
 
   private next(state: RobotState): RobotState {
-    const nextState = (this.conditionHandlers.get(state.identifier) || nothing)(state);
+    const nextState = (this.handlers.get(state.identifier) || nothing)(state);
     return nextState.identifier === state.identifier ? nextState : this.next(nextState);
   }
 }
