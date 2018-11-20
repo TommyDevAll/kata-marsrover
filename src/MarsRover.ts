@@ -1,15 +1,13 @@
+import { chain } from './handler/Chain';
 import { nothing } from './handler/Command';
 import { completeMovement, handleMovement } from './handler/Movement';
 import { checkObstacle, handleOverflow } from './handler/Planet';
-import { RobotStateHandler } from './handler/RobotStateHandler';
-import { sameCondition } from './handler/SameCondition';
+import { sameIdentifier } from './handler/SameIdentifier';
 import { Command } from './model/Command';
-import { RobotStateIdentifier } from './model/RobotStateIdentifier';
 import { Direction, EAST, NORTH, SOUTH, WEST } from './model/Direction';
 import { Planet } from './model/Planet';
-import { RobotState } from './state/RobotState';
+import { RobotState, RobotStateHandler, RobotStateIdentifier } from './state/RobotState';
 import { State } from './state/State';
-import { chain } from './handler/Chain';
 
 const stringToDirection: Map<string, Direction> = new Map<string, Direction>([
   ['N', NORTH],
@@ -57,8 +55,8 @@ export class MarsRover {
     this.conditionHandlers = new Map<RobotStateIdentifier, RobotStateHandler>([
       [RobotStateIdentifier.IDLE, chain([handleOverflow(planet), handleMovement])],
       [RobotStateIdentifier.BLOCKED, nothing],
-      [RobotStateIdentifier.MOVING_FRONT, sameCondition([checkObstacle(planet, toFront), completeMovement(toFront)])],
-      [RobotStateIdentifier.MOVING_BACK, sameCondition([checkObstacle(planet, toBack), completeMovement(toBack)])],
+      [RobotStateIdentifier.MOVING_FRONT, sameIdentifier([checkObstacle(planet, toFront), completeMovement(toFront)])],
+      [RobotStateIdentifier.MOVING_BACK, sameIdentifier([checkObstacle(planet, toBack), completeMovement(toBack)])],
     ]);
   }
 
@@ -73,7 +71,7 @@ export class MarsRover {
   }
 
   private next(state: RobotState): RobotState {
-    const nextState = (this.conditionHandlers.get(state.props.condition) || nothing)(state);
-    return nextState.props.condition === state.props.condition ? nextState : this.next(nextState);
+    const nextState = (this.conditionHandlers.get(state.identifier) || nothing)(state);
+    return nextState.identifier === state.identifier ? nextState : this.next(nextState);
   }
 }

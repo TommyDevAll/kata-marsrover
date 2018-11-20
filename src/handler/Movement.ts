@@ -1,18 +1,16 @@
 import { Command } from '../model/Command';
-import { RobotStateIdentifier } from '../model/RobotStateIdentifier';
 import { Coordinates } from '../model/Coordinates';
-import { RobotState } from '../state/RobotState';
+import { RobotState, RobotStateHandler, RobotStateIdentifier } from '../state/RobotState';
 
 import { chain } from './Chain';
 import { nothing } from './Command';
-import { RobotStateHandler } from './RobotStateHandler';
 
 const front: RobotStateHandler = (state: RobotState) => {
-  return state.update({ condition: RobotStateIdentifier.MOVING_FRONT });
+  return state.to(RobotStateIdentifier.MOVING_FRONT);
 };
 
 const back: RobotStateHandler = (state: RobotState) => {
-  return state.update({ condition: RobotStateIdentifier.MOVING_BACK });
+  return state.to(RobotStateIdentifier.MOVING_BACK);
 };
 
 const right: RobotStateHandler = (state: RobotState) => {
@@ -29,7 +27,7 @@ export const handleMovement: RobotStateHandler = (state: RobotState) =>
   (movementHandlers.get(state.props.command) || nothing)(state);
 
 export const completeMovement = (toPosition: (state: RobotState) => Coordinates) => (state: RobotState) => {
-  return state.update({ coordinates: toPosition(state), condition: RobotStateIdentifier.IDLE });
+  return state.update({ coordinates: toPosition(state) }).to(RobotStateIdentifier.IDLE);
 };
 
 const movementHandlers: Map<Command, RobotStateHandler> = new Map<Command, RobotStateHandler>([

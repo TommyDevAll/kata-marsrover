@@ -1,6 +1,4 @@
-import { RobotState } from '../state/RobotState';
-
-import { RobotStateHandler } from './RobotStateHandler';
+import { RobotState, RobotStateHandler } from '../state/RobotState';
 
 export const chain = (handlers: RobotStateHandler[]) => (state: RobotState) => {
   let temporaryState: RobotState = state.update({});
