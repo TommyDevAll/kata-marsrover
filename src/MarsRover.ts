@@ -1,6 +1,6 @@
 import { chain } from './handler/Chain';
-import { nothing } from './handler/Command';
-import { completeMovement, handleCommand } from './handler/Movement';
+import { handleCommand, nothing } from './handler/Command';
+import { completeMovement } from './handler/Movement';
 import { checkObstacle, handleOverflow } from './handler/Planet';
 import { sameIdentifier } from './handler/SameIdentifier';
 import { Command } from './model/Command';
