@@ -1,20 +1,22 @@
-export interface Identifiable {
-  readonly identifier: any;
+export interface Identifiable<I> {
+  readonly identifier: I;
 }
 
-export class State<I, T> implements Identifiable {
-  constructor(readonly identifier: I, readonly props: T) {}
+export class State<I, P> implements Identifiable<I> {
+  constructor(readonly identifier: I, readonly props: P) {}
 
-  to(identifier: I): State<I, T> {
+  to(identifier: I): State<I, P> {
     return new State(identifier, this.props);
   }
 
-  update(props: Partial<T>): State<I, T> {
+  update(props: Partial<P>): State<I, P> {
     const first = this.props as any;
     const second = props as any;
     const merged = { ...first, ...second };
-    return new State(this.identifier, merged as T);
+    return new State(this.identifier, merged as P);
   }
 }
 
-export type StateHandler<T> = (state: T) => T;
+export type StateHandler<S extends State<any, any>> = (
+  state: State<S['identifier'], S['props']>,
+) => State<S['identifier'], S['props']>;
