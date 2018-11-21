@@ -41,7 +41,7 @@ export class MarsRover {
     const positionListener = (updatedPosition: string) => (this.position = updatedPosition);
 
     this.machine = new StateMachineBuilder<RobotState>()
-      .with(RobotStateId.IDLE, handleCommand, resetCommand)
+      .with(RobotStateId.IDLE, handleCommand, /* TODO: create a proper method to pass onLeave handlers */ resetCommand)
       .with(RobotStateId.BLOCKED, notifyPosition(positionListener))
       .with(RobotStateId.MOVING_FRONT, all([checkObstacle(planet, toFront), completeMovement(toFront)]))
       .with(RobotStateId.MOVING_BACK, all([checkObstacle(planet, toBack), completeMovement(toBack)]))
